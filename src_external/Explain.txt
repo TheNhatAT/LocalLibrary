@@ -1,0 +1,37 @@
+- The package.json file defines the application dependencies and other information
+- cookie-parser: để phân tích cookie header và điền req.cookies
+    + cung cấp thêm các method tiện ích để access cookie information
+- morgan: HTTP req logger middleware for node
+- luxon: library for dating format
+- http-errors: tạo ra các HTTP errors cần thiết (cho express error handling)
+- /bin/www is the application entry point
+    + require() is a global bode function
+- app.js create an express application object (name = app)
+    + set up setting and middleware
+    + path: code Node library for parsing file and directory paths
+- routes:
+    + folder chứa các file js xử lý các URLs
+    + app.use('/prefix_url', name_router) to use router that contain routes
+    + next() function -> chain of callback
+    + /:your_parameter_name/ -> stored in req.params
+- views:
+    + store template engine views
+
+- Asynchronous flow:
+    + async.parallel() -> run multiple asynchronous operations in parallel -> run when all functions in the first argument have completed
+    + async.series() -> run multiple asynchronous operations in sequence -> run multiple asynchronous operations in sequence -> subsequent fn don't depend on the output of earlier fn
+    + async.waterfall() -> run multiple asynchronous operations in sequence -> run multiple async  operations in sequence when each operation is dependent on the result of the previous operation.
+- Pug: (template engine)
+    +
+====== DATABASE =======
+-mongoose -> ODM -> tương tự như hibernate
+    + virtual: like @Transient in Hibernate
+
+
+NOTE:
+    + regular expressions
+    + middleware function là gì ?
+    + all JS object inherit properties and methods from a PROTOTYPE
+        - all object inherit Object.prototype
+
+

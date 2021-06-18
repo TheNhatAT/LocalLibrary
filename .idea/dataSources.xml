@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="test@cluster0-shard-00-00.eedfk.mongodb.net" uuid="35d94406-2a15-48f0-aba7-cbab9315eb09">
+      <driver-ref>mongo</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
+      <jdbc-url>mongodb://cluster0-shard-00-00.eedfk.mongodb.net:27017,cluster0-shard-00-01.eedfk.mongodb.net:27017,cluster0-shard-00-02.eedfk.mongodb.net:27017/test?replicaSet=atlas-ci2pjx-shard-0&amp;ssl=true&amp;authSource=admin</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </component>
+</project>

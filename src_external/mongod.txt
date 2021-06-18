@@ -1,0 +1,35 @@
+JSON:
+    + lightweight: [ {}, {}, ..] in payload
+    + traversable: JS
+    + fast:
+    + string, number, array, embeded doc, boolean
+BSON: Binary JSON
+    + mongodb represent JSON -> BSON (extension of JSON)
+    + support more datatypes: ObjectId, Date,..
+    + add Index, query expression ???
+    + binary data
+    + lightweight
+    + traversable: easy to convert
+    + fast
+
+Query Selectors:
+    + Comparison:
+        - $eq (equal), $gt (greater), $gte (greater + equal), $in (in)
+        - $lt (less), $lte (less + equal), $ne (not equal), $nin (not in)
+    + Logical:
+        - $and, $not, $nor, $or
+    + Element:
+        - $exists, $type
+    + Evaluation:
+        - $expr (expression), $joinSchema, $regex (regular expression)
+        - $text, $where
+    + Array:
+        - $all, $elemMatch, $size
+    + Bitwise:
+        - $bitsAllClear (0000..00), $bitsAllSet (111...11)
+        - $bitsAnyClear (any has 0), $bitsAnySet (any has 1)
+Projection Operators: $, $elemMatch, $meta, $slice ???
+Miscellaneous Operators: $comment, $rand
+
+Data Modeling:
+    + not join table -> embed document
