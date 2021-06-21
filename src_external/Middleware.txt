@@ -1,0 +1,13 @@
+Định nghĩa:
+    - Là hàm có quyền truy cập vào req, res, next object
+    - Nằm giữa req - res cycle
+Chức năng:
+    - Execute any code
+    - Changes req and res object
+    - End req-res cycle
+    - Call the next -> để chuyển quyền điều khiển đến middleware function tiếp theo
+Note:
+    - hàm next() là hàm tham chiếu tới middleware function tiếp theo trong chuỗi
+    - dùng app.use(middleware_fn_name) để chạy hàm này
+    - thứ tự khi dùng hàm app.use(...) chính là thứ tự chạy của các hàm
+    
