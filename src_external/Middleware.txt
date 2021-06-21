@@ -5,7 +5,15 @@ Chức năng:
     - Execute any code
     - Changes req and res object
     - End req-res cycle
-    - Call the next -> để chuyển quyền điều khiển đến middleware function tiếp theo
+    - Call the next -> để chuyển quyền điều khiển đến middleware function tiếp theo nếu
+    middleware function chưa kết thúc req-res cycle
+Có 5 loại middleware function:
+    - Application-level
+        + Được sử dụng ở app object -> dùng app.use() và app.METHOD (get, post, put)
+        + Được liên kết (bind) với đường dẫn (path) bất kỳ
+    - Route-level
+    - Error-handling
+    - Third-party
 Note:
     - hàm next() là hàm tham chiếu tới middleware function tiếp theo trong chuỗi
     - dùng app.use(middleware_fn_name) để chạy hàm này
