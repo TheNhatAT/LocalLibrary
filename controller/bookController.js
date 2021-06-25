@@ -52,6 +52,7 @@ exports.book_detail = function(req, res, next) {
                 .exec(callback);
         },
         book_instance: function (callback) {
+            //-- BookInstance có 1 field là book = book._id (FK)
             BookInstance.find({'book': req.params.id})
                 .exec(callback);
         }
