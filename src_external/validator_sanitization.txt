@@ -1,0 +1,9 @@
+Validator:
+    - validators are middleware functions
+    - use to validate data before save in DB
+Use:
+    - trim(), escape() - remove html characters
+    - withMessage() - specify the error message
+    - optional() - run a next validation
+        -> flags:
+            + checkFalsy: accept either an empty string or null as an empty value

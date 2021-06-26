@@ -16,7 +16,6 @@
     + /:your_parameter_name/ -> stored in req.params
 - views:
     + store template engine views
-
 - Asynchronous flow:
     + async.parallel() -> run multiple asynchronous operations in parallel -> run when all functions in the first argument have completed
     + async.series() -> run multiple asynchronous operations in sequence -> run multiple asynchronous operations in sequence -> subsequent fn don't depend on the output of earlier fn
