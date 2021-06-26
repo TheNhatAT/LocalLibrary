@@ -6,6 +6,6 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 router.get('/cool', function(req, res, next) {
-  res.send('Hellosdsd nodejs');
+  res.send('Hello nodejs');
 });
 module.exports = router;
