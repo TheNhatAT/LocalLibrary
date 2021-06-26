@@ -2,8 +2,8 @@ let Book = require('../models/book');
 let Author = require('../models/author');
 let BookInstance = require('../models/bookinstance');
 let Genre = require('../models/genre');
-
 let async = require('async');
+let {body, validationResult} = require('express-validator');
 
 exports.index = function(req, res) {
     async.parallel({
@@ -59,7 +59,7 @@ exports.book_detail = function(req, res, next) {
     },  function (err, results) {
         if (err) { return next(err); }
         if (results.book==null) { // No results.
-            var err = new Error('Book not found');
+            let err = new Error('Book not found');
             err.status = 404;
             return next(err);
         }
@@ -69,15 +69,82 @@ exports.book_detail = function(req, res, next) {
 };
 
 // Display book create form on GET.
-exports.book_create_get = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book create GET');
+exports.book_create_get = function(req, res, next) {
+    // get all authors and genres, for adding with book
+    async.parallel({
+        authors: function (callback) {
+            Author.find().exec(callback);
+        },
+        genres: function (callback) {
+            Genre.find().exec(callback);
+        }
+    }, function (err, results) {
+        if (err) return next(err);
+        res.render('book_form', {title: 'Create Book', authors: results.authors, genres: results.genres})
+    })
 };
 
 // Handle book create on POST.
-exports.book_create_post = function(req, res) {
-    res.send('NOT IMPLEMENTED: Book create POST');
-};
+// array of middleware functions
+exports.book_create_post = [
+    // convert the genre to an array
+    function (req, res, next) {
+        if (!(req.body.genre instanceof  Array)){
+            if(typeof req.body.genre ==='undefined')
+                req.body.genre = [];
+            else
+                req.body.genre = new Array(req.body.genre);
+        }
+        next();
+    },
+    // validate and sanitize fields
+    // use withMessage()
+    body('title').trim().isLength({min: 1}).withMessage('Title must not be empty').escape(),
+    // not use withMessage()
+    body('author', 'Author must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('summary', 'Summary must not be empty.').trim().isLength({ min: 1 }).escape(),
+    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }).escape(),
+    // ' * ' -> "sanitise every item below key genre"
+    body('genre.*').escape(),
 
+    // process req after validation and sanitization
+    function (req, res, next) {
+        const errors = validationResult(req);
+        let book = new Book ({
+            title: req.body.title,
+            author: req.body.author,
+            summary: req.body.summary,
+            isbn: req.body.isbn,
+            genre: req.body.genre
+        });
+        if (!errors.isEmpty()) {
+            // errors occur -> render form again with sanitized values
+            async.parallel({
+                authors: function (callback) {
+                    Author.find().exec(callback);
+                },
+                genres: function (callback) {
+                    Genre.find().exec(callback);
+                }
+            }, function (err, results) {
+                if (err) return next(err);
+
+                for (let i = 0; i < results.genres.length; i++) {
+                    if (book.genre.indexOf(results.genres[i]._id) > - 1) {
+                        results.genres[i].checked = 'true';
+                    }
+                }
+                res.render('book_form', {title: 'Create book', authors: results.authors
+                    , genres:results.genres, book: book, errors: errors.array()})
+            });
+        } else {
+            book.save(function (err) {
+                res.redirect(book.url);
+            })
+        }
+    }
+
+]
 // Display book delete form on GET.
 exports.book_delete_get = function(req, res) {
     res.send('NOT IMPLEMENTED: Book delete GET');
