@@ -130,7 +130,7 @@ exports.author_delete_post = function (req, res, next) {
             res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
         }
         else {
-            Author.remove({'_id': req.body.authorid}, function (err) {
+            Author.deleteOne({'_id': req.body.authorid}, function (err) {
                 next(err);
             });
             res.redirect('/catalog/authors');
