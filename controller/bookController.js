@@ -226,7 +226,9 @@ exports.book_update_post = [
     function (req, res, next) {
         const errors = validationResult(req);
 
+        // console.log(req.params);
         let book = new Book({
+            _id: req.params.id,
             title: req.body.title,
             author: req.body.author,
             summary: req.body.summary,
@@ -251,14 +253,15 @@ exports.book_update_post = [
                     }
                 }
                 res.render('book_form', {
-                    title: 'Update book', authors: results.authors
-                    , genres: results.genres, book: book, errors: errors.array()
+                    title: 'Update book', authors: results.authors, genres: results.genres, book: book, errors: errors.array()
                 })
             });
         } else {
-            book.save(function (err) {
-                res.redirect(book.url);
-            })
+            Book.findByIdAndUpdate(req.params.id, book, {}, function (err,thebook) {
+                if (err) { return next(err); }
+                // Successful - redirect to book detail page.
+                res.redirect(thebook.url);
+            });
         }
     }
 
