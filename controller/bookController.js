@@ -156,13 +156,48 @@ exports.book_create_post = [
 
 ]
 // Display book delete form on GET.
-exports.book_delete_get = function (req, res) {
-    res.send('NOT IMPLEMENTED: Book delete GET');
+exports.book_delete_get = function (req, res, next) {
+    async.parallel({
+        bookinstances: function (callback) {
+            BookInstance.find({'book': req.params.id})
+                .exec(callback);
+        },
+        book: function (callback) {
+            Book.findOne({'_id': req.params.id})
+                .exec(callback);
+        }
+    }, function (err, results) {
+        if (err) next(err);
+        if (results.book == null) {
+            res.redirect('/catalog/books');
+        }
+        res.render('book_delete' , {title: 'Delete Book', book: results.book, bookinstances: results.bookinstances});
+    });
 };
 
 // Handle book delete on POST.
-exports.book_delete_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: Book delete POST');
+exports.book_delete_post = function (req, res, next) {
+    async.parallel({
+        bookinstances: function (callback) {
+            BookInstance.find({'book': req.params.id})
+                .exec(callback);
+        },
+        book: function (callback) {
+            Book.findOne({'_id': req.params.id})
+                .exec(callback);
+        }
+    }, function (err, results) {
+        if (err) next(err);
+        if (results.bookinstances.length > 0) {
+            res.render('book_delete' , {title: 'Delete Book', book: results.book, bookinstances: results.bookinstances});
+        }
+        else {
+            Book.deleteOne({'_id': req.body.bookid}, function (err) {
+                next(err);
+            });
+            res.redirect('/catalog/books');
+        }
+    });
 };
 
 // Display book update form on GET.

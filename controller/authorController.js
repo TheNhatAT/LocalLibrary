@@ -2,6 +2,7 @@ let Author = require('../models/author');
 let async = require('async');
 let Book = require('../models/book');
 let {body, validationResult} = require('express-validator');
+
 //== display list of all Authors
 exports.author_list = function (req, res, next) {
     Author.find()
@@ -139,11 +140,58 @@ exports.author_delete_post = function (req, res, next) {
 };
 
 // Display Author update form on GET.
-exports.author_update_get = function (req, res) {
-    res.send('NOT IMPLEMENTED: Author update GET');
+exports.author_update_get = function (req, res, next) {
+    Author.findById(req.params.id)
+        .exec(function (err, author) {
+            if (err) next(err);
+            if (author == null) {
+                let err = new Error('Book not found');
+                err.status = 404;
+                return next(err);
+            }
+            res.render('author_form', {title: 'Update author', author: author});
+        })
 };
 
 // Handle Author update on POST.
-exports.author_update_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: Author update POST');
-};
+exports.author_update_post = [
+    body('date_of_birth').optional({checkFalsy: true}).isDate().withMessage('Birth of author must be a date'),
+    body('date_of_death').optional({checkFalsy: true}).isDate().withMessage('Death of author must be a date'),
+        // .isAfter().withMessage('Date of death must be after date of birth'),
+    body('first_name').trim().isLength({min: 3}).withMessage('Author first name must not be empty'),
+    body('family_name').trim().isLength({min: 3}).withMessage('Author family name must not be empty'),
+   // process req after validation and sanitization
+   function (req, res, next) {
+       const errors = validationResult(req);
+
+       let author = new Author(
+       {
+           _id: req.params.id,
+           first_name: req.body.first_name,
+           family_name: req.body.family_name,
+           date_of_birth: req.body.date_of_birth,
+           date_of_death: req.body.date_of_death
+       }
+       );
+       if(!errors.isEmpty()) {
+           Author.findOne({'_id': req.params.id})
+               .exec(function (err, author) {
+                   if (err) next(err);
+                   if (author == null) {
+                       let err = new Error('Book not found');
+                       err.status = 404;
+                       return next(err);
+                   }
+                   res.render('author_form',
+                       {title: 'Update author', author: author, errors: errors.array()});
+               });
+       }
+       else {
+           console.log(author);
+           Author.findOneAndUpdate({'_id': req.params.id}, author, {}, function (err, newAuthor) {
+               if (err) return next(err);
+               res.redirect(newAuthor.url);
+           });
+       }
+   }
+]
