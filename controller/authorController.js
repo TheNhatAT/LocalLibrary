@@ -37,6 +37,8 @@ exports.author_detail = function (req, res, next) {
             author: results.author,
             author_books: results.authors_books
         })
+    }).catch(err => {
+        next(err)
     });
 }
 
@@ -99,22 +101,10 @@ exports.author_delete_get = function (req, res, next) {
                 author_books: results.author_books
             })
         }
-    );
+    ).catch(err => {
+        next(err)
+    });
 }
-//-- using then/catch (promise)
-//     ).then(function (results) {
-//         if (results.author == null) {
-//             res.redirect('/catalog/authors');
-//         }
-//         res.render('author_delete', {
-//             title: 'Delete Author',
-//             author: results.author,
-//             author_books: results.author_books
-//         });
-//     }).catch(error => {
-//         return next(error);
-//     })
-// };
 
 // Handle Author delete on POST.
 exports.author_delete_post = function (req, res, next) {
@@ -136,7 +126,9 @@ exports.author_delete_post = function (req, res, next) {
             });
             res.redirect('/catalog/authors');
         }
-    })
+    }).catch(err => {
+        next(err)
+    });
 };
 
 // Display Author update form on GET.
@@ -156,7 +148,10 @@ exports.author_update_get = function (req, res, next) {
 // Handle Author update on POST.
 exports.author_update_post = [
     body('date_of_birth').optional({checkFalsy: true}).isDate().withMessage('Birth of author must be a date'),
-    body('date_of_death').optional({checkFalsy: true}).isDate().withMessage('Death of author must be a date'),
+    body('date_of_death').custom((deathDay, {req}) => {
+        if (deathDay < req.body.date_of_birth)
+            return Promise.reject('Date of death must be after date of birth')
+    }).optional({checkFalsy: true}).isDate().withMessage('Death of author must be a date'),
         // .isAfter().withMessage('Date of death must be after date of birth'),
     body('first_name').trim().isLength({min: 3}).withMessage('Author first name must not be empty'),
     body('family_name').trim().isLength({min: 3}).withMessage('Author family name must not be empty'),

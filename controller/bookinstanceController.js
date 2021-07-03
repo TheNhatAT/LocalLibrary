@@ -1,7 +1,7 @@
 let BookInstance = require('../models/bookinstance');
+let async = require('async');
 let {body, validationResult} = require('express-validator');
 let Book = require('../models/book');
-
 // Display list of all BookInstances.
 exports.bookinstance_list = function (req, res, next) {
 
@@ -96,11 +96,54 @@ exports.bookinstance_delete_post = function (req, res, next) {
 };
 
 // Display BookInstance update form on GET.
-exports.bookinstance_update_get = function (req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance update GET');
+exports.bookinstance_update_get = function (req, res, next) {
+    async.parallel({
+        bookinstance: function (callback) {
+            BookInstance.findById(req.params.id)
+                .exec(callback);
+        },
+        book_list: function (callback) {
+            Book.find().exec(callback);
+        }
+    }).then(result => {
+        res.render('bookinstance_form', {
+            title: 'Update Book Instance',
+            bookinstance: result.bookinstance,
+            book_list: result.book_list
+        });
+    }).catch(err => {
+        next(err);
+    })
 };
 
 // Handle bookinstance update on POST.
-exports.bookinstance_update_post = function (req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance update POST');
-};
+exports.bookinstance_update_post = [
+    body('book', 'Book must be specified').trim().isLength({min: 1}).escape(),
+    body('imprint', 'Imprint must be specified').trim().isLength({min: 1}).escape(),
+    body('status').escape(),
+    body('due_back', 'Invalid date').optional({checkFalsy: true}).isISO8601().toDate(),
+
+    function (req, res, next) {
+        const errors = validationResult(req);
+
+        let bookInstance = new BookInstance({
+            _id: req.params.id,
+            book: req.body.book,
+            imprint: req.body.imprint,
+            status: req.body.status,
+            due_back: req.body.due_back
+        });
+        if (!errors.isEmpty()) {
+            Book.find({}, 'title')
+                .exec(function (err, books) {
+                    if (err) next(err);
+                    res.render('bookinstance_form', {title: 'Create BookInstance', books: books});
+                });
+        } else {
+            bookInstance.updateOne(bookInstance, {}, function (err) {
+                if (err) return next(err);
+                res.redirect(bookInstance.url);
+            })
+        }
+    }
+]

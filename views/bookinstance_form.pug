@@ -23,11 +23,11 @@ block content
 
         div.form-group
             label(for='status') Status:
-            select#status.form-control(type='select' placeholder='Select status' name='status' required='true')
-                option(value='Maintenance') Maintenance
-                option(value='Available') Available
-                option(value='Loaned') Loaned
-                option(value='Reserved') Reserved
+            select#status.form-control(type='select' placeholder='Select status' name='status' required='true' )
+                option(value='Maintenance' selected=(bookinstance.status.toString() === 'Maintenance' ? 'selected' : false)) Maintenance
+                option(value='Available' selected=(bookinstance.status.toString() === 'Available' ? 'selected' : false)) Available
+                option(value='Loaned' selected=(bookinstance.status.toString() === 'Loaned' ? 'selected' : false)) Loaned
+                option(value='Reserved' selected=(bookinstance.status.toString() === 'Reserved' ? 'selected' : false)) Reserved
 
         button.btn.btn-primary(type='submit') Submit
 

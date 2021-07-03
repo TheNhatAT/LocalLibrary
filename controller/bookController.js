@@ -5,7 +5,7 @@ let Genre = require('../models/genre');
 let async = require('async');
 let {body, validationResult} = require('express-validator');
 
-exports.index = function (req, res) {
+exports.index = function (req, res, next) {
     async.parallel({
         book_count: function (callback) {
             Book.countDocuments({}, callback); // Pass an empty object as match condition to find all documents of this collection
@@ -25,6 +25,8 @@ exports.index = function (req, res) {
     }, function (err, results) {
         res.render('index', {title: 'Local Library Home', error: err, data: results});
         //    console.log(results);
+    }).catch(err => {
+        next(err)
     });
 
 };
@@ -73,6 +75,8 @@ exports.book_detail = function (req, res, next) {
             book: results.book,
             book_instances: results.book_instance
         });
+    }).catch(err => {
+        next(err)
     });
 };
 
@@ -89,7 +93,9 @@ exports.book_create_get = function (req, res, next) {
     }, function (err, results) {
         if (err) return next(err);
         res.render('book_form', {title: 'Create Book', authors: results.authors, genres: results.genres})
-    })
+    }).catch(err => {
+        next(err)
+    });
 };
 
 // Handle book create on POST.
@@ -146,6 +152,8 @@ exports.book_create_post = [
                     title: 'Create book', authors: results.authors
                     , genres: results.genres, book: book, errors: errors.array()
                 })
+            }).catch(err => {
+                next(err)
             });
         } else {
             book.save(function (err) {
@@ -172,6 +180,8 @@ exports.book_delete_get = function (req, res, next) {
             res.redirect('/catalog/books');
         }
         res.render('book_delete' , {title: 'Delete Book', book: results.book, bookinstances: results.bookinstances});
+    }).catch(err => {
+        next(err)
     });
 };
 
@@ -197,6 +207,8 @@ exports.book_delete_post = function (req, res, next) {
             });
             res.redirect('/catalog/books');
         }
+    }).catch(err => {
+        next(err)
     });
 };
 
@@ -231,6 +243,8 @@ exports.book_update_get = function (req, res, next) {
             }
         }
         res.render('book_form', { title: 'Update Book', authors: results.authors, genres: results.genres, book: results.book })
+    }).catch(err => {
+        next(err)
     });
 
 };
@@ -290,6 +304,8 @@ exports.book_update_post = [
                 res.render('book_form', {
                     title: 'Update book', authors: results.authors, genres: results.genres, book: book, errors: errors.array()
                 })
+            }).catch(err => {
+                next(err)
             });
         } else {
             Book.findByIdAndUpdate(req.params.id, book, {}, function (err,thebook) {
