@@ -111,9 +111,7 @@ exports.bookinstance_update_get = function (req, res, next) {
             bookinstance: result.bookinstance,
             book_list: result.book_list
         });
-    }).catch(err => {
-        next(err);
-    })
+    });
 };
 
 // Handle bookinstance update on POST.

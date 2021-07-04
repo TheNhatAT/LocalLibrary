@@ -37,8 +37,6 @@ exports.author_detail = function (req, res, next) {
             author: results.author,
             author_books: results.authors_books
         })
-    }).catch(err => {
-        next(err)
     });
 }
 
@@ -101,9 +99,7 @@ exports.author_delete_get = function (req, res, next) {
                 author_books: results.author_books
             })
         }
-    ).catch(err => {
-        next(err)
-    });
+    );
 }
 
 // Handle Author delete on POST.
@@ -118,7 +114,8 @@ exports.author_delete_post = function (req, res, next) {
     }, function (err, results) {
         if (err) next(err);
         if (results.author_books.length > 0) {
-            res.render('author_delete', { title: 'Delete Author', author: results.author, author_books: results.authors_books } );
+            res.render('author_delete', { title: 'Delete Author',
+                author: results.author, author_books: results.authors_books } );
         }
         else {
             Author.deleteOne({'_id': req.body.authorid}, function (err) {
@@ -126,8 +123,6 @@ exports.author_delete_post = function (req, res, next) {
             });
             res.redirect('/catalog/authors');
         }
-    }).catch(err => {
-        next(err)
     });
 };
 
@@ -182,7 +177,7 @@ exports.author_update_post = [
                });
        }
        else {
-           console.log(author);
+           // console.log(author);
            Author.findOneAndUpdate({'_id': req.params.id}, author, {}, function (err, newAuthor) {
                if (err) return next(err);
                res.redirect(newAuthor.url);
