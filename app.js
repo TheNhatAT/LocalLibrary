@@ -7,6 +7,8 @@ let logger = require('morgan');
 let indexRouter = require('./routes/index');
 let usersRouter = require('./routes/users');
 let catalogRouter = require('./routes/catalog');
+let compression = require('compression');
+let helmet = require('helmet');
 
 let app = express();
 
@@ -28,6 +30,8 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use(compression());
+app.use(helmet());
 app.use(express.static(path.join(__dirname, 'public')));
 
 /** thêm prefix vào URL trong các file route */
