@@ -118,6 +118,7 @@ exports.book_create_post = [
     // process req after validation and sanitization
     function (req, res, next) {
         const errors = validationResult(req);
+        console.log(req.body.genre)
         let book = new Book({
             title: req.body.title,
             author: req.body.author,
